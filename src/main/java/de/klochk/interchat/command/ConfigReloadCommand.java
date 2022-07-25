@@ -37,18 +37,17 @@ public class ConfigReloadCommand implements CommandExecutor {
         JavaPlugin plugin = INTERCHAT.get();
         String version = plugin.getDescription().getVersion();
 
-        if (!sender.hasPermission("interchat.reload")) {
+        if (sender.hasPermission("interchat.reload")) {
+            plugin.reloadConfig();
+            ConfigImpl config = ConfigImpl.init(plugin.getConfig());
+            CONFIG.setObject(config);
+
+            sender.sendMessage(colorize("<green>Successfully reloaded configuration!"));
+        } else {
             sender.sendMessage(colorize(
                     "<aqua>Interchat v<dark_aqua>" + version + "</dark_aqua>"
             ));
-            return true;
         }
-
-        plugin.reloadConfig();
-        ConfigImpl config = ConfigImpl.init(plugin.getConfig());
-        CONFIG.setObject(config);
-
-        sender.sendMessage(colorize("<green>Successfully reloaded configuration!"));
 
         return true;
     }
