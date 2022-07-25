@@ -89,9 +89,8 @@ public class Discord extends ListenerAdapter {
 
         String format = endpoint.replace("{name}", username)
                              .replace("{message}", msg);
-        this.guild.modifyNickname(this.guild.getSelfMember(), username).queue((queue) -> {
-            this.channel.sendMessage(format).queue();
-        });
+        this.guild.modifyNickname(this.guild.getSelfMember(), username)
+                .queue((queue) -> this.channel.sendMessage(format).queue());
 
     }
 
@@ -105,18 +104,24 @@ public class Discord extends ListenerAdapter {
             if (member.getUser().equals(jda.getSelfUser())) return;
 
             Message message = event.getMessage();
-            Role role = member.getRoles().get(0);
+            Role role = null;
+
+            if (member.getRoles().size() > 0) {
+                role = member.getRoles().get(0);
+            }
 
             String broadcast = minecraft;
             broadcast = broadcast
                     .replace("{name}", member.getEffectiveName())
-                    .replace("{role}", role.getName())
                     .replace("{message}", message.getContentDisplay());
 
-            String roleColor = (role.getColor() != null) ?
+            String roleColor = (role != null && role.getColor() != null) ?
                     asHexColorString(role.getColor()) :
                     "";
             broadcast = broadcast.replace("{color}", roleColor);
+
+            String roleName = (role != null) ? role.getName() : "";
+            broadcast = broadcast.replace("{role}", roleName);
 
             AtomicReference<Component> component = new AtomicReference<>(colorize(broadcast));
 
