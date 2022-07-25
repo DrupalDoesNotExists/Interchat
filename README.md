@@ -5,7 +5,7 @@
 This repository provides source code of Interchat spigotmc plugin.
 All files licensed under MIT.
 
-[SpigotMC](https://www.spigotmc.org/resources/interchat-telegram-and-discord-integration-updates-full-free.103692/) Documentation (WIP)
+[SpigotMC](https://www.spigotmc.org/resources/interchat-telegram-and-discord-integration-updates-full-free.103692/) [Documentation](https://klochk.gitbook.io/interchat-wiki)
 
 ## Documentation
 
