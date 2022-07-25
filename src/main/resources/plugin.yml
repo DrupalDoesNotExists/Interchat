@@ -1,0 +1,14 @@
+name: Interchat
+version: '${version}'
+main: de.klochk.interchat.Interchat
+api-version: 1.19
+authors: [ klochk, Walter ]
+description: Integrate your discord and telegram servers with minecraft
+load: STARTUP
+libraries:
+  - net.dv8tion:JDA:5.0.0-alpha.17
+  - com.github.pengrad:java-telegram-bot-api:6.1.0
+commands:
+  interchat:
+    description: Reload plugin configuration
+    usage: /interchat

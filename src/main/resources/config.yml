@@ -1,0 +1,27 @@
+#
+# InterChat | Discord and Telegram integration
+#
+# Documentation: https://documentation.ru/
+# SpigotMC: https://spigotmc.org/
+# Github:
+#
+# Licensed under MIT.
+#
+
+media-view:
+  enable: true
+  hover: "<color:#7289da>RCM</color> <gray>to open attachments"
+
+discord:
+  token: "YOUR-TOKEN-HERE"
+  enabled: false
+  minecraft: "<color:#7289da>DISCORD</color> <color:#36393e>|</color> <color:{color}>{role} {name}</color> <color:#36393e>»</color> {message}"
+  endpoint: "{name}: {message}"
+  channel: 012345678910
+
+telegram:
+  token: "YOUR-TOKEN-HERE"
+  enabled: false
+  minecraft: "<color:#0088CC>TELEGRAM</color> <color:#36393e>|</color> {name} <color:#36393e>»</color> {message}"
+  endpoint: "{name}: {message}"
+  channel: "012345678910"
