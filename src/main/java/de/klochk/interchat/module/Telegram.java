@@ -4,13 +4,18 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.*;
 import com.pengrad.telegrambot.request.SendMessage;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 import static de.klochk.interchat.Singleton.INTERCHAT;
@@ -37,7 +42,6 @@ public class Telegram implements UpdatesListener {
     private String minecraft;
     private String endpoint;
     private boolean viewMedia;
-    private Component viewMediaHover;
     private String channel;
 
     /**
@@ -48,11 +52,10 @@ public class Telegram implements UpdatesListener {
      * @param endpoint  Endpoint format
      * @param viewMedia View media?
      */
-    public void init(String token, String minecraft, String endpoint, boolean viewMedia, Component viewMediaHover, String channel) {
+    public void init(String token, String minecraft, String endpoint, boolean viewMedia, String channel) {
         this.minecraft = minecraft;
         this.endpoint = endpoint;
         this.viewMedia = viewMedia;
-        this.viewMediaHover = viewMediaHover;
         this.channel = channel;
 
         logger.info("Activating telegram module");
@@ -100,38 +103,53 @@ public class Telegram implements UpdatesListener {
     @Override
     public int process(List<Update> updates) {
 
-        updates.forEach(update -> {
-            Message message = update.message();
-            if (message == null) return;
-            User user = message.from();
+        CompletableFuture.runAsync(() -> {
 
-            String broadcast = minecraft;
+            for (Update update : updates) {
 
-            String userName = (user.firstName() != null) ? user.firstName() : "";
-            broadcast = broadcast.replace("{first_name}", userName);
+                Message message = update.message();
+                if (message == null) return;
+                User user = message.from();
 
-            String userLastName = (user.lastName() != null) ? user.lastName() : "";
-            broadcast = broadcast.replace("{last_name}", userLastName);
+                String userName = (user.firstName() != null) ? user.firstName() : "";
+                String userLastName = (user.lastName() != null) ? user.lastName() : "";
+                String messageText = (message.text() != null) ? message.text() : "";
+                Component component = colorize(minecraft,
+                        TagResolver.builder()
+                                .tag("first_name",
+                                        Tag.selfClosingInserting(
+                                                Component.text(userName)
+                                        ))
+                                .tag("last_name",
+                                        Tag.selfClosingInserting(
+                                                Component.text(userLastName)
+                                        ))
+                                .tag("message",
+                                        Tag.selfClosingInserting(
+                                                Component.text(messageText)
+                                        ))
+                                .tag("name",
+                                        Tag.selfClosingInserting(
+                                                Component.text(user.username())
+                                        ))
+                                .build());
 
-            broadcast = broadcast.replace("{name}", user.username());
+                if (message.sticker() != null && viewMedia) {
+                    component = component.append(Component.text(
+                            " <Sticker>", NamedTextColor.AQUA
+                    ));
+                }
 
-            String messageText = (message.text() != null) ? message.text() : "";
-            broadcast = broadcast.replace("{message}", messageText);
+                if (message.photo() != null && viewMedia) {
+                    component = component.append(Component.text(
+                            " <Photo>", NamedTextColor.AQUA
+                    ));
+                }
 
-            Component component = colorize(broadcast);
-            if (message.sticker() != null && viewMedia) {
-                component = component.append(Component.text(
-                        " <Sticker>", NamedTextColor.AQUA
-                ));
+                Bukkit.broadcast(component);
+
             }
 
-            if (message.photo() != null && viewMedia) {
-                component = component.append(Component.text(
-                        " <Photo>", NamedTextColor.AQUA
-                ));
-            }
-
-            Bukkit.broadcast(component);
         });
 
         return UpdatesListener.CONFIRMED_UPDATES_ALL;

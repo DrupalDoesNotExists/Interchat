@@ -1,16 +1,22 @@
 package de.klochk.interchat.module;
 
 import lombok.SneakyThrows;
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -19,8 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 import static de.klochk.interchat.Singleton.INTERCHAT;
-import static de.klochk.interchat.utility.RGB.asHexColorString;
-import static de.klochk.interchat.utility.RGB.colorize;
+import static de.klochk.interchat.utility.RGB.*;
 
 /**
  * Discord module
@@ -110,20 +115,24 @@ public class Discord extends ListenerAdapter {
                 role = member.getRoles().get(0);
             }
 
-            String broadcast = minecraft;
-            broadcast = broadcast
-                    .replace("{name}", member.getEffectiveName())
-                    .replace("{message}", message.getContentDisplay());
-
-            String roleColor = (role != null && role.getColor() != null) ?
-                    asHexColorString(role.getColor()) :
-                    "";
-            broadcast = broadcast.replace("{color}", roleColor);
-
             String roleName = (role != null) ? role.getName() : "";
-            broadcast = broadcast.replace("{role}", roleName);
+            TextColor roleColor = (role != null && role.getColor() != null)
+                    ? asTextColor(role.getColor())
+                    : null;
 
-            AtomicReference<Component> component = new AtomicReference<>(colorize(broadcast));
+            AtomicReference<Component> component = new AtomicReference<>(
+                    colorize(minecraft, TagResolver.builder()
+                            .tag("name", Tag.selfClosingInserting(
+                                    Component.text(member.getEffectiveName())
+                            ))
+                            .tag("role", Tag.selfClosingInserting(
+                                    Component.text(roleName, roleColor)
+                            ))
+                            .tag("message", Tag.selfClosingInserting(
+                                    Component.text(message.getContentDisplay())
+                            ))
+                            .build())
+            );
 
             List<Message.Attachment> attachmentList = message.getAttachments();
             if (viewMedia && attachmentList.size() > 0) {

@@ -57,7 +57,6 @@ public final class Interchat extends JavaPlugin {
                         config.getTelegramMinecraft(),
                         config.getTelegramEndpoint(),
                         config.isMediaViewEnable(),
-                        config.getMediaViewHover(),
                         config.getTelegramChannel()
                 );
                 Bukkit.getPluginManager().registerEvents(new TelegramMessageListener(), this);

@@ -1,7 +1,9 @@
 package de.klochk.interchat.utility;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.awt.*;
 
@@ -22,13 +24,22 @@ public class RGB {
     }
 
     /**
-     * Convert color to #RRGGBB format
-     * @param color Color
-     * @return Formatted string
+     * Colorize string with RGB and custom tags
+     * @param string Source string
+     * @param resolver Tag resolver
+     * @return Colorful string
      */
-    public static String asHexColorString(Color color) {
-        return String.format("#%02x%02x%02x",
-                color.getRed(), color.getGreen(), color.getBlue());
+    public static Component colorize(String string, TagResolver resolver) {
+        return miniMessage.deserialize(string, resolver);
+    }
+
+    /**
+     * Convert color to TextColor
+     * @param color Color
+     * @return TextColor
+     */
+    public static TextColor asTextColor(Color color) {
+        return TextColor.color(color.getRed(), color.getGreen(), color.getBlue());
     }
 
 }
