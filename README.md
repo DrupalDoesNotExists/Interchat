@@ -1,5 +1,8 @@
 # Interchat | 1.19 full Discord and Telegram integration
 
+![Code Quality](https://www.codefactor.io/Content/badges/APlus.svg)
+
+
 This repository provides source code of Interchat spigotmc plugin.
 All files licensed under MIT.
 

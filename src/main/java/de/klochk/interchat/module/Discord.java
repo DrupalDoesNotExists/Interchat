@@ -94,8 +94,12 @@ public class Discord extends ListenerAdapter {
 
         String format = endpoint.replace("{name}", username)
                              .replace("{message}", msg);
+
         this.guild.modifyNickname(this.guild.getSelfMember(), username)
-                .queue((queue) -> this.channel.sendMessage(format).queue());
+                .queue((queue) -> this.channel.sendMessage(format).queue((event) -> {
+                    Member self = guild.getSelfMember();
+                    self.modifyNickname(self.getUser().getName()).queue();
+                }));
 
     }
 
