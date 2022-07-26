@@ -16,7 +16,7 @@ public enum Singleton {
     CONFIG(null),
 
     DISCORD(null),
-    TELEGRAM(new Telegram()),
+    TELEGRAM(null),
     ;
 
     @Setter
