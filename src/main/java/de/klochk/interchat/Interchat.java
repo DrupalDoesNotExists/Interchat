@@ -74,8 +74,12 @@ public final class Interchat extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        DISCORD.<Discord>get().disable();
-        TELEGRAM.<Telegram>get().disable();
+        Discord discord = DISCORD.get();
+        Telegram telegram = TELEGRAM.get();
+
+        if (discord != null) discord.disable();
+        if (telegram != null) telegram.disable();
+
     }
 
 }

@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'de.klochk'
-version = 'bionic-1.0.1'
+version = 'bionic-1.0.2'
 
 repositories {
     mavenCentral()
